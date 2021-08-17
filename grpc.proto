@@ -1,0 +1,15 @@
+syntax="proto3";
+
+package gRPC_app;
+
+service Hello {
+  rpc SayHello(UserName) returns (HelloMessage);
+}
+
+message UserName {
+  string name = 1;
+}
+
+message  HelloMessage {
+  string message = 1;
+}
