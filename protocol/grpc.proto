@@ -2,11 +2,11 @@ syntax="proto3";
 
 package gRPC_app;
 
-service Hello {
-  rpc SayHello(UserName) returns (HelloMessage);
+service HelloService {
+  rpc SayHello(UserNameMessage) returns (HelloMessage);
 }
 
-message UserName {
+message UserNameMessage {
   string name = 1;
 }
 
