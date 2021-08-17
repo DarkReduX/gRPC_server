@@ -5,11 +5,17 @@ import (
 	pb "github.com/DarkReduX/gRPC_service/protocol"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"io"
 	"net"
+	"os"
 )
 
 type server struct {
 	pb.UnimplementedHelloServiceServer
+}
+
+type pictureServer struct {
+	grpc.ServerStream
 }
 
 func main() {
@@ -28,9 +34,29 @@ func main() {
 
 }
 
-func (s server) SayHelloMessage(ctx context.Context, req *pb.UserNameMessage) (response *pb.HelloMessage, err error) {
+func (s server) SayHello(ctx context.Context, req *pb.UserNameMessage) (response *pb.HelloMessage, err error) {
 	response = &pb.HelloMessage{
 		Message: "Hello " + req.Name,
 	}
 	return response, nil
+}
+
+func (s server) SendPicture(stream pb.HelloService_SendPictureServer) error {
+	pictureOut, err := os.Create("pic1.png")
+	if err != nil {
+		return err
+	}
+	for {
+		msg, err := stream.Recv()
+
+		if err == io.EOF {
+			responseMsg := "New responseMsg received "
+			stream.SendAndClose(&pb.Response{Message: responseMsg})
+			return nil
+		}
+		if err != nil {
+			logrus.Fatalf("couldn't receive from stream : %v", err)
+		}
+		pictureOut.Write(msg.GetContent())
+	}
 }

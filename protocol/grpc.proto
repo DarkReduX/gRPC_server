@@ -6,7 +6,7 @@ option go_package = "./protocol";
 
 
 service HelloService {
-  rpc SayHello(UserNameMessage) returns (HelloMessage);
+  rpc SendPicture(stream Picture) returns (Response);
 }
 
 message UserNameMessage {
@@ -14,5 +14,13 @@ message UserNameMessage {
 }
 
 message  HelloMessage {
+  string message = 1;
+}
+
+message Picture {
+  bytes content = 1;
+}
+
+message Response {
   string message = 1;
 }
